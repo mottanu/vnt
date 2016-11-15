@@ -1,0 +1,60 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+
+<div class="">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Inregistrari curente</h3>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <div class="x_title">
+        <h2>Inregistrari curente</h2>
+
+        <div class="clearfix"></div>
+      </div>
+      
+
+      <div class="x_content">
+
+
+        <div class="table-responsive">
+          <table class="table table-striped jambo_table bulk_action">
+            <thead>
+              <tr class="headings">
+                <th class="column-title"># </th>
+                <th class="column-title">Data</th>
+                <th class="column-title">Fond vanatoare</th>
+                <th class="column-title">Specie</th>
+                <th class="column-title">Numar exemplare</th>
+                <th class="column-title">Observatii</th>
+                <th class="column-title">Actiuni</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for inregistrare in inregistrari %}
+              <tr class="even pointer">
+                <td class=" ">{{ inregistrare.nr }}</td>
+                <td class=" ">{{ inregistrare.data }}</td>
+                <td class=" ">{{ inregistrare.fondVanatoare }}</td>
+                <td class=" ">{{ inregistrare.specie }}</td>
+                <td class=" ">{{ inregistrare.numar }}</td>
+                <td class="">{{ inregistrare.observatii }}</td>
+                <td class=" last"><a href="/cms/inregistrari/{{ inregistrare.id }}/edit">Modifica</a> | <a href="/cms/inregistrari/{{ inregistrare.id }}/detalii">Valori brute</a></td>
+              </tr>
+              {% endfor %}
+             </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+{% endblock %}

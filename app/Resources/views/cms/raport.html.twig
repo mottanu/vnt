@@ -1,0 +1,34 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Raport</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Specie</th>
+          <th>Contorizare</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for specie in listaSpecii %}
+          <tr>
+            <td>{{ specie.name }}</td>
+            <td>{{ specie.total }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br>
+    {% if generare == true %}
+      {% form_theme form 'bootstrap_3_layout.html.twig' %}
+      {{ form_start(form) }}
+      {{ form_widget(form) }}
+      {{ form_end(form) }}
+    {% endif %}
+    
+  </div>
+
+{% endblock %}

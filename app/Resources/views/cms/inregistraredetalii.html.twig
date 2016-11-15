@@ -1,0 +1,39 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Informatii brute</div>
+    <div class="panel-body">
+      <table class="table table-striped jambo_table bulk_action">
+        <tbody>
+          <tr class="even pointer">
+            <td class="">GPS</td>
+            <td class="">{{ inregistrare.latitude }} , {{inregistrare.longitude}}</td>
+          </tr>
+          <tr class="even pointer">
+            <td class="">Altitudine</td>
+            <td class=""> - </td>
+          </tr>
+          <tr class="even pointer">
+            <td class="">Data inregistrare</td>
+            <td class="">{{inregistrare.dataInregistrare}}</td>
+          </tr>
+         </tbody>
+        </table>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Imagini</div>
+    <div class="panel-body">
+      {% for imagine in inregistrare.files %}
+        <div class="col-xs-6 col-md-3 thumbnail">
+          <img src="{{imagine.small}}" alt="Imagine" width="640" height="480">
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+{% endblock %}

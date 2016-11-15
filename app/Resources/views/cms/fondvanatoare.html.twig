@@ -1,0 +1,31 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Fonduri Vanatoare</div>
+    <div class="panel-body">{{unitateJudeteana}}</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Fond Vanatoare</th>
+          <th>Suprafata (ha)</th>
+          <th>Data</th>
+          <th>Actiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fondVanatoare in fonduriVanatoare %}
+          <tr>
+            <td>{{ fondVanatoare.name }}</td>
+            <td>{{ fondVanatoare.suprafata }}</td>
+            <td>{{ fondVanatoare.created }}</td>
+            <td> <a href="/cms/fondvanatoare/{{ fondVanatoare.id }}">Detalii</a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

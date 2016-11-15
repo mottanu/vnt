@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  
+  <div id="wrapper">
+    <div id="container">
+        
+      <h2 class="text-center">Logare</h2>
+
+      <div class="card card-sign">
+        <img class="img-responsive" src="/assets/images/logo.png" alt="">
+      
+        {% form_theme form 'bootstrap_3_layout.html.twig' %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}  
+      </div>
+   
+    </div>
+  </div>
+  
+{% endblock %}

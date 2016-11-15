@@ -1,0 +1,68 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Agenti colectori</div>
+    <div class="panel-body">{{fondVanatoare.name}} - judetul {{unitateJudeteana}}</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nume</th>
+          <th>Prenume</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Data inregistrare</th>
+          <th>Actiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for agent in listaAgenti %}
+          <tr>
+            <td>{{ agent.firstname }}</td>
+            <td>{{ agent.lastname }}</td>
+            <td>{{ agent.email }}</td>
+            <td>{{ agent.statusDisplay }}</td>
+            <td>{{ agent.dataInregistrare }}</td>
+            <td> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Invitatii agenti colectori</div>
+    <div class="panel-body">{{fondVanatoare.name}} - judetul {{unitateJudeteana}}</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Data invitatie</th>
+          <th>Actiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for invitatie in listaInvitatii %}
+          <tr>
+            <td>{{ invitatie.email }}</td>
+            <td>{{ invitatie.dataInregistrare }}</td>
+            <td> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Invita agent colector</div>
+      {% form_theme form 'bootstrap_3_layout.html.twig' %}
+      {{ form_start(form) }}
+      {{ form_widget(form) }}
+      {{ form_end(form) }}
+    </div>
+  </div>
+  
+
+{% endblock %}

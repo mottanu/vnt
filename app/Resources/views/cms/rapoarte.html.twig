@@ -1,0 +1,33 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Rapoarte curente</div>
+    <div class="panel-body">Judetul {{unitateJudeteana}}</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Data</th>
+          <th>Fond Vanatoare</th>
+          <th>Agent colector</th>
+          <th>Actiuni</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for raport in rapoarte %}
+          <tr>
+            <td>{{ raport.nr }}</td>
+            <td>{{ raport.dataGenerare }}</td>
+            <td>{{ raport.fondVanatoare }}</td>
+            <td>{{ raport.agent }}</td>
+            <td> <a href="/cms/rapoarte/{{ raport.id }}">Detalii</a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}
