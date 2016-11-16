@@ -15,24 +15,12 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
       UtilsController::initData();
+      UtilsController::initNewUsersData();
       
-      var_dump($request->getSession()->get('user'));
+      //var_dump($request->getSession()->get('user'));
       
       // replace this example code with whatever you need
       return $this->render('default/index.html.twig', [
-        'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-      ]);
-    }
-    
-    /**
-     * @Route("/test", name="test")
-     */
-    public function test(Request $request)
-    {
-      // UtilsController::initData();
-      
-      // replace this example code with whatever you need
-      return $this->render('cms.html.twig', [
         'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
       ]);
     }

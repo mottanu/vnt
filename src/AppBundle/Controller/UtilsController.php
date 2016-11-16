@@ -167,6 +167,113 @@ class UtilsController extends Controller
 
     $dm->flush();
   }
+  
+  /**
+   * Init data
+   */
+  public function initNewUsersData() {
+
+    $dm = $this->get('doctrine_mongodb')->getManager();
+    $dataCurenta = date("c");
+
+    $repository = $dm->getRepository('AppBundle:User');
+    $userCursor = $repository->findBy(array('isAgentColector' => true));
+    if(count($userCursor) == 0) {
+      // Create default agent colector user
+      $passwordArray = UtilsController::encodePassword("p@ss1234");
+      $newAdmin = new User();
+      $newAdmin->email = "colector@mm-vanatoare.ro";
+      $newAdmin->password = $passwordArray[1];
+      $newAdmin->passwordSalt = $passwordArray[0];
+      $newAdmin->firstname = "Agent";
+      $newAdmin->lastname = "Colector";
+      $newAdmin->created = $newAdmin->updated = $dataCurenta;
+      $newAdmin->isAdmin = false;
+      $newAdmin->isAgentColector = true;
+      $newAdmin->isAgentFondVanatoare = false;
+      $newAdmin->isAgentJudetean = false;
+      $newAdmin->isAgentMinister = false;
+      $dm->persist($newAdmin);
+    }
+
+    $userCursor = $repository->findBy(array('isAgentFondVanatoare' => true));
+    if(count($userCursor) == 0) {
+      // Create default agent colector user
+      $passwordArray = UtilsController::encodePassword("p@ss1234");
+      $newAdmin = new User();
+      $newAdmin->email = "fondvanatoare@mm-vanatoare.ro";
+      $newAdmin->password = $passwordArray[1];
+      $newAdmin->passwordSalt = $passwordArray[0];
+      $newAdmin->firstname = "Agent";
+      $newAdmin->lastname = "Fond Vanatoare";
+      $newAdmin->created = $newAdmin->updated = $dataCurenta;
+      $newAdmin->isAdmin = false;
+      $newAdmin->isAgentColector = false;
+      $newAdmin->isAgentFondVanatoare = true;
+      $newAdmin->isAgentJudetean = false;
+      $newAdmin->isAgentMinister = false;
+      $dm->persist($newAdmin);
+    }
+    
+    $userCursor = $repository->findBy(array('isAgentJudetean' => true));
+    if(count($userCursor) == 0) {
+      // Create default agent colector user
+      $passwordArray = UtilsController::encodePassword("p@ss1234");
+      $newAdmin = new User();
+      $newAdmin->email = "jud@mm-vanatoare.ro";
+      $newAdmin->password = $passwordArray[1];
+      $newAdmin->passwordSalt = $passwordArray[0];
+      $newAdmin->firstname = "Agent";
+      $newAdmin->lastname = "Judetean";
+      $newAdmin->created = $newAdmin->updated = $dataCurenta;
+      $newAdmin->isAdmin = false;
+      $newAdmin->isAgentColector = false;
+      $newAdmin->isAgentFondVanatoare = false;
+      $newAdmin->isAgentJudetean = true;
+      $newAdmin->isAgentMinister = false;
+      $dm->persist($newAdmin);
+    }
+    
+    $userCursor = $repository->findBy(array('isAgentMinister' => true));
+    if(count($userCursor) == 0) {
+      // Create default agent colector user
+      $passwordArray = UtilsController::encodePassword("p@ss1234");
+      $newAdmin = new User();
+      $newAdmin->email = "minister@mm-vanatoare.ro";
+      $newAdmin->password = $passwordArray[1];
+      $newAdmin->passwordSalt = $passwordArray[0];
+      $newAdmin->firstname = "Agent";
+      $newAdmin->lastname = "Minister";
+      $newAdmin->created = $newAdmin->updated = $dataCurenta;
+      $newAdmin->isAdmin = false;
+      $newAdmin->isAgentColector = false;
+      $newAdmin->isAgentFondVanatoare = false;
+      $newAdmin->isAgentJudetean = false;
+      $newAdmin->isAgentMinister = true;
+      $dm->persist($newAdmin);
+    }
+    
+    $userCursor = $repository->findBy(array('isAdmin' => true));
+    if(count($userCursor) == 0) {
+      // Create default agent colector user
+      $passwordArray = UtilsController::encodePassword("p@ss1234");
+      $newAdmin = new User();
+      $newAdmin->email = "admin@mm-vanatoare.ro";
+      $newAdmin->password = $passwordArray[1];
+      $newAdmin->passwordSalt = $passwordArray[0];
+      $newAdmin->firstname = "User";
+      $newAdmin->lastname = "Admin";
+      $newAdmin->created = $newAdmin->updated = $dataCurenta;
+      $newAdmin->isAdmin = true;
+      $newAdmin->isAgentColector = false;
+      $newAdmin->isAgentFondVanatoare = false;
+      $newAdmin->isAgentJudetean = false;
+      $newAdmin->isAgentMinister = false;
+      $dm->persist($newAdmin);
+    }
+
+    $dm->flush();
+  }
 
   /**
    * Check if $value exists and is empty

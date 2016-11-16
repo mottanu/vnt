@@ -166,7 +166,18 @@ class FormsController extends Controller
           $session->set('apiKey', $newToken->token);
           $session->set('apiKeyLast', time());
 
-          return $this->redirectToRoute('cmsDashboard');
+          $redirectRoute = 'cmsDashboard';
+          if($checkUser->isAdmin)
+            $redirectRoute = 'adminDashboard';
+          else if($checkUser->isAgentMinister)
+            $redirectRoute = 'amDashboard';
+          else if($checkUser->isAgentJudetean)
+            $redirectRoute = 'ajDashboard';
+          else if($checkUser->isAgentFondVanatoare)
+            $redirectRoute = 'afDashboard';
+          else if($checkUser->isAgentColector)
+            $redirectRoute = 'acDashboard';
+          return $this->redirectToRoute($redirectRoute);
         }
       }
     }

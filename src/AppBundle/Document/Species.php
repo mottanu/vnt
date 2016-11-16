@@ -41,6 +41,11 @@ class Species
    */
   public $active = true;
   
+  /**
+   * @MongoDB\Field(type="bool")
+   */
+  public $fisa = true;
+  
   public function __construct() {
     $this->created = date("c");
   }
@@ -65,6 +70,7 @@ class Species
       'name' => $this->name,
       'active' => $this->active,
       'diviziune' => $divList,
+      'fisa' => $this->fisa,
       'detalii' => $this->detalii,
       'created' => is_string($this->created) ? $this->created : $this->created->format('c'),
     );

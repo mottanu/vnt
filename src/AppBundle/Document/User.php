@@ -88,6 +88,11 @@ class User
   /**
    * @MongoDB\Field(type="bool")
    */
+  public $isAgentFondVanatoare = false;
+  
+  /**
+   * @MongoDB\Field(type="bool")
+   */
   public $isAgentJudetean = false;
   
   /**
@@ -127,6 +132,7 @@ class User
       'active' => $this->active,
       'isAdmin' => $this->isAdmin,
       'isAgentColector' => $this->isAgentColector,
+      'isAgentFondVanatoare' => $this->isAgentFondVanatoare,
       'isAgentJudetean' => $this->isAgentJudetean,
       'isAgentMinister' => $this->isAgentMinister,
       'unitateJudeteana' => $this->unitateJudeteana,
