@@ -93,7 +93,7 @@ class Autorizatie
   /**
    * @MongoDB\Field(type="date")
    */
-  public $checkoutData;
+  public $checkoutData = "";
   
   public function getId() {
     return $this->id;
