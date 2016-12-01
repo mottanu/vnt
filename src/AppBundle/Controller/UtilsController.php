@@ -455,7 +455,8 @@ class UtilsController extends Controller
       'fondVanatoare' => "",
       'rapoarte' => "",
       'cote' => "",
-      'autorizatii' => ""
+      'autorizatii' => "",
+      'autorizatieadauga' => ""
     );
 
     switch($page) {
