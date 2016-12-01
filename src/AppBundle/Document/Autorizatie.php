@@ -95,6 +95,21 @@ class Autorizatie
    */
   public $checkoutData = "";
   
+  /**
+   * @MongoDB\Field(type="collection")
+   */
+  public $gpsLog = array();
+  
+  /**
+   * @MongoDB\Field(type="string")
+   */
+  public $checkinLatitude;
+  
+  /**
+   * @MongoDB\Field(type="string")
+   */
+  public $checkinLongitude;
+  
   public function getId() {
     return $this->id;
   }
@@ -118,6 +133,9 @@ class Autorizatie
       'checkinData' => is_string($this->checkinData) ? $this->checkinData : $this->checkinData->format('c'),
       'vanat' => $this->vanat,
       'checkoutData' => is_string($this->checkoutData) ? $this->checkoutData : $this->checkoutData->format('c'),
+      'gpsLog' => $this->gpsLog,
+      'checkinLatitude' => $this->checkinLatitude,
+      'checkinLongitude' => $this->checkinLongitude
     );
   }
 }

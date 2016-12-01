@@ -28,7 +28,9 @@ class VanatoareController extends Controller
    *     description="Checkin autorizatie.",
    *     section="Vanatoare",
    *     parameters={
-   *       {"name"="numarAutorizatie", "dataType"="string", "required"=true, "source"="body", "description"="Numar autorizatie"}
+   *       {"name"="numarAutorizatie", "dataType"="string", "required"=true, "source"="body", "description"="Numar autorizatie"},
+   *       {"name"="latitude", "dataType"="string", "required"=true, "source"="body", "description"="Latitudine checkin"},
+   *       {"name"="longitude", "dataType"="string", "required"=true, "source"="body", "description"="Longitudine checkin"}
    *     }
    *  )
    */
@@ -59,9 +61,16 @@ class VanatoareController extends Controller
     
     if($autorizatie->organizatorId != $user->getId())
       return UtilsController::error("Utilizatorul nu are permisiunea de a utiliza aceasta autorizatie!", 414);
+    
+    $latitude = $request->request->get("latitude");
+    $longitude = $request->request->get("longitude");
 
     $autorizatie->checkinData = date("c");
     $autorizatie->checkinUser = $user->getId();
+    if(!empty($latitude))
+      $autorizatie->checkinLatitude = $latitude;
+    if(!empty($longitude))
+      $autorizatie->checkinLongitude = $longitude;
     $dm->flush();
 
     $resp = array(
@@ -338,64 +347,78 @@ class VanatoareController extends Controller
     return new JsonResponse($resp);
   }
   
-  // /**
-  //  * Matches /v1/inregistrari/{inregistrareId}/removeFile exactly
-  //  *
-  //  * @Route("/v1/inregistrari/{inregistrareId}/removeFile", name="removeFile")
-  //  * @Method({"POST"})
-  //  *
-  //  * @ApiDoc(
-  //  *     resource=true,
-  //  *     resourceDescription="Remove file from inregistrare.",
-  //  *     description="Remove file from inregistrare.",
-  //  *     section="Inregistrari",
-  //  *     parameters={
-  //  *       {"name"="fileId", "dataType"="string", "required"=true, "source"="body", "description"="File ID"},
-  //  *     }
-  //  *  )
-  //  */
-  // public function removeFile(Request $request, $adId = null) {
-  //
-  //   $dm = $this->get('doctrine_mongodb')->getManager();
-  //   $user = UtilsController::isAuthenticated($request, $dm);
-  //
-  //   if(!$user)
-  //     return UtilsController::error("Token invalid!", 404);
-  //
-  //   $inregistrareRepository = $dm->getRepository('AppBundle:Inregistrare');
-  //   $inregistrare = $inregistrareRepository->findOneById($inregistrareId);
-  //   if (!$inregistrare)
-  //     return UtilsController::error("Nu am gasit nicio inregistrare pentru id-ul oferit ". $inregistrareId);
-  //
-  //   if($user->getId() != $inregistrare->userId)
-  //     return UtilsController::error("Utilizatorul nu are permisiunea de a edita aceasta inregistrare!");
-  //
-  //   $fileId = $request->request->get('fileId');
-  //
-  //   if(empty($fileId))
-  //     return UtilsController::error("Campul fileId este necesar!");
-  //
-  //   $newFiles = array();
-  //   foreach($ad->files as $file) {
-  //     if($file['fileId'] == $fileId) {
-  //       GoogleCloudStorageController::deleteFile($file['filePath']);
-  //       GoogleCloudStorageController::deleteFile($file['smallPath']);
-  //       GoogleCloudStorageController::deleteFile($file['largePath']);
-  //     }
-  //     else
-  //       $newFiles[] = $file;
-  //   }
-  //
-  //   $inregistrare->files = $newFiles;
-  //   $dm->flush();
-  //
-  //   $resp = array(
-  //     'ok' => true,
-  //     'result' => array(
-  //       'inregistrare' => $inregistrare->display()
-  //     )
-  //   );
-  //   return new JsonResponse($resp);
-  // }
+  /**
+   * Matches /v1/vanatoare/{vanatoareId}/gps exactly
+   *
+   * @Route("/v1/vanatoare/{vanatoareId}/gps", name="vanatoareAutorizatieGps")
+   * @Method({"POST"})
+   *
+   * @ApiDoc(
+   *     resource=true,
+   *     resourceDescription="Adauga fisier log-uri gps.",
+   *     description="Adauga fisier log-uri gps.",
+   *     section="Vanatoare",
+   *     parameters={
+   *       {"name"="file", "dataType"="file", "required"=true, "source"="body", "description"="File"}
+   *     }
+   *  )
+   */
+  public function vanatoareAutorizatieGps(Request $request, $vanatoareId = null) {
+
+    $dm = $this->get('doctrine_mongodb')->getManager();
+    $userRepository = $dm->getRepository('AppBundle:User');
+    $autorizatiiRepository = $dm->getRepository('AppBundle:Autorizatie');
+
+    $user = UtilsController::isAuthenticated($request, $dm);
+
+    if(!$user)
+      return UtilsController::error("Token invalid!", 404);
+    if(!$user->isAgentColector && !$user->isAgentFondVanatoare)
+      return UtilsController::error("Utilizatorul nu are permisiunea de a realiza aceasta actiune!", 406);
+
+    if(empty($vanatoareId))
+      return UtilsController::error("Autorizatie invalida!", 414);
+    
+    $autorizatie =  $autorizatiiRepository->findOneById($vanatoareId);
+    if(!$autorizatie)
+      return UtilsController::error("Autorizatie invalida!", 414);
+    
+    if(!$autorizatie->activa)
+      return UtilsController::error("Autorizatia nu este valabila!", 413);
+    
+    if($autorizatie->organizatorId != $user->getId())
+      return UtilsController::error("Utilizatorul nu are permisiunea de a utiliza aceasta autorizatie!", 414);
+
+    $file = $request->files->get('file');
+    if($file == null) 
+      return UtilsController::error("Lipsa fisier!");
+    
+    if($file->getSize() > 5000*1024)
+      return UtilsController::error("Fisierul folosit e prea mare. Marimea maxima e de 5 MB!");
+    
+    $newFileId = new \MongoId(); $newFileId = $newFileId->__toString();
+    $newFilePath = $file->getPathname();
+    $newFileName = $user->getId() . '/'. $newFileId . '/' . $file->getClientOriginalName();
+    $newFileType = $file->getMimeType();
+    $fileUploaded = GoogleCloudStorageController::uploadFile($newFilePath, $newFileName, $newFileType);
+    
+    $newFile = array(
+      'fileId' => $newFileId,
+      'filePath' => $newFileName,
+      'fileType' => $newFileType,
+      'original' => $fileUploaded->getMediaLink()
+    );
+      
+    $autorizatie->gpsLog[] = $newFile;
+    $dm->flush();
+
+    $resp = array(
+      'ok' => true,
+      'result' => array(
+        'autorizatie' => $autorizatie->display()
+      )
+    );
+    return new JsonResponse($resp);
+  }
 
 }
