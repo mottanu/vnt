@@ -33,7 +33,7 @@ class Autorizatie
   /**
    * @MongoDB\Field(type="string")
    */
-  public $organizator;
+  public $organizatorId;
 
   /**
    * @MongoDB\Field(type="hash")
@@ -44,6 +44,11 @@ class Autorizatie
    * @MongoDB\Field(type="collection")
    */
   public $vanatori;
+  
+  /**
+   * @MongoDB\Field(type="collection")
+   */
+  public $vanat;
   
   /**
    * @MongoDB\Field(type="date")
@@ -70,6 +75,26 @@ class Autorizatie
    */
   public $an;
   
+  /**
+   * @MongoDB\Field(type="boolean")
+   */
+  public $activa = true;
+  
+  /**
+   * @MongoDB\Field(type="string")
+   */
+  public $checkinUser;
+  
+  /**
+   * @MongoDB\Field(type="date")
+   */
+  public $checkinData;
+  
+  /**
+   * @MongoDB\Field(type="date")
+   */
+  public $checkoutData;
+  
   public function getId() {
     return $this->id;
   }
@@ -79,7 +104,7 @@ class Autorizatie
       'id' => $this->id,
       'userId' => $this->userId,
       'numar' => $this->numar,
-      'organizator' => $this->organizator,
+      'organizatorId' => $this->organizatorId,
       'cote' => $this->cote,
       'vanatori' => $this->vanatori,
       'contor' => $this->contor,
@@ -87,7 +112,12 @@ class Autorizatie
       'dataInceput' => is_string($this->dataInceput) ? $this->dataInceput : $this->dataInceput->format('c'),
       'dataSfarsit' => is_string($this->dataSfarsit) ? $this->dataSfarsit : $this->dataSfarsit->format('c'),
       'created' => is_string($this->created) ? $this->created : $this->created->format('c'),
-      'createdWeb' => is_string($this->created) ? $this->created : $this->created->format('Y-m-j H:i:s')
+      'createdWeb' => is_string($this->created) ? $this->created : $this->created->format('Y-m-j H:i:s'),
+      'activa' => $this->activa,
+      'checkinUser' => $this->checkinUser,
+      'checkinData' => is_string($this->checkinData) ? $this->checkinData : $this->checkinData->format('c'),
+      'vanat' => $this->vanat,
+      'checkoutData' => is_string($this->checkoutData) ? $this->checkoutData : $this->checkoutData->format('c'),
     );
   }
 }

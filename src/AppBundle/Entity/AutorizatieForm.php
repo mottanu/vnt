@@ -17,7 +17,7 @@ class AutorizatieForm
    * @Assert\NotBlank()
    * @Assert\Type("string")
    */
-  public $organizator;
+  public $organizatorId;
   
   /**
    * @Assert\NotBlank()

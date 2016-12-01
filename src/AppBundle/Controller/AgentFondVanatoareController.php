@@ -189,15 +189,25 @@ class AgentFondVanatoareController extends Controller
 
     $listaTipuri = UtilsController::getTipuriAutorizatie();
     
+    $agentiColectoriCursor = $dm->createQueryBuilder('AppBundle:User')
+      ->field('fondVanatoare')->equals($user->fondVanatoare)
+      ->sort('firstname', 'asc')
+      ->getQuery()->execute();
+    $listaOrganizatori= array();
+    foreach($agentiColectoriCursor as $agent) {
+      $listaOrganizatori[$agent->firstname . " " . $agent->lastname] = $agent->getId();
+    }
+    
     $autorizatieForm = new AutorizatieForm();
     $form = $this->createFormBuilder($autorizatieForm)
         ->add('tip', ChoiceType::class, array(
           'required' => true,
           'choices'  => $listaTipuri,
           'label' => 'Tip autorizatie'))
-        ->add('organizator', TextType::class, array(
+        ->add('organizatorId', ChoiceType::class, array(
           'required' => true,
-          'label' => 'Organizator'))
+          'choices'  => $listaOrganizatori,
+          'label' => 'Tip autorizatie'))
         ->add('dataInceput', DateType::class, array(
           'widget' => 'choice',
           'label' => 'Data Inceput'))
@@ -220,7 +230,7 @@ class AgentFondVanatoareController extends Controller
         $autorizatieNoua->numar = $numarAutorizatie;
         $autorizatieNoua->tip = $autorizatieForm->tip;
         $autorizatieNoua->userId = $user->getId();
-        $autorizatieNoua->organizator = $autorizatieForm->organizator;
+        $autorizatieNoua->organizatorId = $autorizatieForm->organizatorId;
         $autorizatieNoua->cote = array();
         $autorizatieNoua->vanatori = array();
         $autorizatieNoua->dataInceput = $autorizatieForm->dataInceput;
