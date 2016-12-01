@@ -1,0 +1,40 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Autorizatie nr {{autorizatie.numar}} </div>
+    <div class="panel-body">
+      <p>Specii aprobate</p>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Specie</th>
+            <th>Numar</th>
+            <th>Actiuni</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key,value in autorizatie.cote %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ value }}</td>
+              <td> <a href="/cms/am/cote/{{ key }}">Detalii</a> </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Adauga cota
+      {% form_theme form 'bootstrap_3_layout.html.twig' %}
+      {{ form_start(form) }}
+      {{ form_widget(form) }}
+      {{ form_end(form) }}
+    </div>
+  </div>
+
+{% endblock %}

@@ -415,7 +415,7 @@ class UtilsController extends Controller
       return null;
 
     $apiKeyLast = $session->get('apiKeyLast');
-    if(empty($apiKeyLast) || time() - $apiKeyLast > 3600)
+    if(empty($apiKeyLast) || time() - $apiKeyLast > 86400)
       return null;
 
     if($dm == null)
@@ -453,7 +453,9 @@ class UtilsController extends Controller
       'raport' => "",
       "istoric" => "",
       'fondVanatoare' => "",
-      'rapoarte' => ""
+      'rapoarte' => "",
+      'cote' => "",
+      'autorizatii' => ""
     );
 
     switch($page) {
@@ -463,6 +465,9 @@ class UtilsController extends Controller
       case "istoric": $navigation['istoric'] = "current-page"; break;
       case "fondVanatoare": $navigation['fondVanatoare'] = "current-page"; break;
       case "rapoarte": $navigation['rapoarte'] = "current-page"; break;
+      case "cote": $navigation['cote'] = "current-page"; break;
+      case "autorizatii": $navigation['autorizatii'] = "current-page"; break;
+      case "autorizatieadauga": $navigation['autorizatieadauga'] = "current-page"; break;
       default: $navigation['dashboard'] = "current-page"; break;
     }
 
@@ -516,5 +521,62 @@ class UtilsController extends Controller
     }
 
     return $speciesList;
+  }
+  
+  public function getTipuriAutorizatie() {
+    $tipuri = array(
+      "Individuala" => 0,
+      "Grup restrans" => 1,
+      "Colectiva" => 2
+    );
+
+    return $tipuri;
+  }
+  
+  public function getUrmatorulNumarAutorizatie($dm) {
+    if($dm == null)
+      $dm = $this->get('doctrine_mongodb')->getManager();
+
+    $cursorAutorizatii = $dm->createQueryBuilder('AppBundle:Autorizatie')
+      ->sort('created', 'desc')
+      ->limit(1)
+      ->getQuery()->execute();
+  
+    $ultimulContor = 0;
+    if ($cursorAutorizatii->count() > 0) {
+        $cursorAutorizatii->next();
+        $ultimaAutorizatie = $cursorAutorizatii->current();
+        $ultimulContor = $ultimaAutorizatie->contor;
+    } 
+  
+    return $ultimulContor + 1;
+  }
+  
+  public function getSerieAgentFondVanatoare($serie) {
+    $serieString = "";
+    if($serie < 10)
+      $serieString = "000" . $serie;
+    else if($serie < 100)
+      $serieString = "00" . $serie;
+    else if($serie < 1000)
+      $serieString = "0" . $serie;
+    else
+      $serieString = "" . $serie;
+  
+    return $serieString;
+  }
+  
+  public function getContor($contor) {
+    $contorString = "";
+    if($contor < 10)
+      $contorString = "000" . $contor;
+    else if($contor < 100)
+      $contorString = "00" . $contor;
+    else if($contor < 1000)
+      $contorString = "0" . $contor;
+    else
+      $contorString = "" . $contor;
+  
+    return $contorString;
   }
 }

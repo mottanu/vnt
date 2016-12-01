@@ -110,6 +110,11 @@ class User
    */
   public $fondVanatoare;
   
+  /**
+   * @MongoDB\Field(type="int")
+   */
+  public $serieAgentFondVanatoare;
+  
   public function getId() {
     return $this->id;
   }
@@ -124,6 +129,7 @@ class User
       'email' => $this->email,
       'firstname' => $this->firstname,
       'lastname' => $this->lastname,
+      'fullname' => $this->firstname . " " . $this->lastname,
       'address' => $this->address,
       'city' => $this->city,
       'device' => $this->device,
@@ -136,7 +142,8 @@ class User
       'isAgentJudetean' => $this->isAgentJudetean,
       'isAgentMinister' => $this->isAgentMinister,
       'unitateJudeteana' => $this->unitateJudeteana,
-      'fondVanatoare' => $this->fondVanatoare
+      'fondVanatoare' => $this->fondVanatoare,
+      'serieAgentFondVanatoare' => $this->serieAgentFondVanatoare
     );
   }
 }

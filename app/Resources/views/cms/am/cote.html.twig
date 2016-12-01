@@ -1,0 +1,45 @@
+{% extends 'cms/base.html.twig' %}
+
+{% block body %}
+    
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">Cote aprobate</div>
+    <div class="panel-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Agent Fond Vanatoare</th>
+            <th>Specie</th>
+            <th>Cota</th>
+            <th>Data</th>
+            <th>Agent Aprobare</th>
+            <th>Actiuni</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cota in listaCote %}
+            <tr>
+              <td>{{ cota.user.fullname }}</td>
+              <td>{{ cota.specie.name }}</td>
+              <td>{{ cota.nr }}</td>
+              <td>{{ cota.createdWeb }}</td>
+              <td>{{ cota.userAprobare.fullname }}</td>
+              <td> <a href="/cms/am/cote/{{ cota.id }}">Detalii</a> </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">Aproba cota
+      {% form_theme form 'bootstrap_3_layout.html.twig' %}
+      {{ form_start(form) }}
+      {{ form_widget(form) }}
+      {{ form_end(form) }}
+    </div>
+  </div>
+
+{% endblock %}

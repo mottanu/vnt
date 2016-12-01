@@ -61,6 +61,18 @@
                     </li>
                     {% endif %}
                     
+                    {% if user.isAgentFondVanatoare %}
+                    <li>
+                      <a><i class="fa fa-home"></i> Autorizatii <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li class="{{ navigation['autorizatii'] }}"><a href="/cms/af/autorizatii">Autorizatii</a></li>
+                      </ul>
+                      <ul class="nav child_menu">
+                        <li class="{{ navigation['autorizatieadauga'] }}"><a href="/cms/af/autorizatii/adauga">Autorizatie noua</a></li>
+                      </ul>
+                    </li>
+                    {% endif %}
+                    
                     {% if user.isAgentJudetean %}
                     <li>
                       <a><i class="fa fa-home"></i> Rapoarte <span class="fa fa-chevron-down"></span></a>
@@ -72,6 +84,15 @@
                       <a><i class="fa fa-home"></i> Fond Vanatoare <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
                         <li class="{{ navigation['fondVanatoare'] }}"><a href="/cms/fondvanatoare">Fond Vanatoare</a></li>
+                      </ul>
+                    </li>
+                    {% endif %}
+                    
+                    {% if user.isAgentMinister %}
+                    <li>
+                      <a><i class="fa fa-home"></i> Cote Vanatoare <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li class="{{ navigation['cote'] }}"><a href="/cms/am/cote">Cote</a></li>
                       </ul>
                     </li>
                     {% endif %}
