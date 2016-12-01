@@ -88,7 +88,7 @@ class Autorizatie
   /**
    * @MongoDB\Field(type="date")
    */
-  public $checkinData;
+  public $checkinData = "";
   
   /**
    * @MongoDB\Field(type="date")

@@ -63,7 +63,7 @@ class AgentFondVanatoareController extends Controller
    * Matches /cms/af/autorizatii exactly
    *
    * @Route("/cms/af/autorizatii", name="cmsAfAutorizatii")
-   * @Method({"GET","POST"})
+   * @Method({"GET"})
    *
    */
   public function cmsAfAutorizatii(Request $request) {
@@ -76,7 +76,7 @@ class AgentFondVanatoareController extends Controller
       return $this->redirectToRoute('loginPage');
     }
     
-    if(!$user->isAgentMinister && !$user->isAdmin) {
+    if(!$user->isAgentFondVanatoare && !$user->isAdmin) {
       $request->getSession()->invalidate();
       return $this->redirectToRoute('loginPage');
     }
@@ -84,85 +84,30 @@ class AgentFondVanatoareController extends Controller
     $userRepository = $dm->getRepository('AppBundle:User');
     $speciesRepository = $dm->getRepository('AppBundle:Species');
     
-    $speciesCursor = $dm->createQueryBuilder('AppBundle:Species')
-      ->sort('name', 'asc')
-      ->getQuery()->execute();
-    $listaSpecii = array();
-    $listaSpeciiSelect = array();
-    foreach($speciesCursor as $specie) {
-      $listaSpecii[] = $specie->display();
-      $listaSpeciiSelect[$specie->name] = $specie->getId();
-    }
-    
-    $agentiFondVanatoareCursor = $dm->createQueryBuilder('AppBundle:User')
-      ->field('isAgentFondVanatoare')->equals(true)
-      ->sort('name', 'asc')
-      ->getQuery()->execute();
-    $listaAgentiFondVanatoare = array();
-    $listaAgentiVanatoareSelect = array();
-    foreach($agentiFondVanatoareCursor as $agent) {
-      $listaAgentiFondVanatoare[] = $agent->display();
-      $listaAgentiVanatoareSelect[$agent->firstname . " " . $agent->lastname] = $agent->getId();
-    }
-    
-    $cotaForm = new CotaForm();
-    $form = $this->createFormBuilder($cotaForm)
-        ->add('userId', ChoiceType::class, array(
-          'required' => true,
-          'choices'  => $listaAgentiVanatoareSelect,
-          'label' => 'Agent Fond Vanatoare'))
-        ->add('speciesId', ChoiceType::class, array(
-          'required' => true,
-          'choices'  => $listaSpeciiSelect,
-          'label' => 'Specie'))
-        ->add('nr', IntegerType::class, array(
-          'data' => 0,
-          'label' => 'Cota aprobata'))
-        ->add('salveaza', SubmitType::class, array('label' => 'Trimite invitatie'))
-        ->getForm();
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-
-      if ($form->get('salveaza')->isClicked()) {
-        $cotaForm = $form->getData();
-        
-        $newCota = new Cota();
-        $newCota->userId = $cotaForm->userId;
-        $newCota->speciesId = $cotaForm->speciesId;
-        $newCota->nr = $cotaForm->nr;
-        $newCota->userAprobareId = $user->getId();
-        $newCota->created = date("c");
-        $dm->persist($newCota);
-        $dm->flush();
-      }
-    }
-    
-    $cursorCote = $dm->createQueryBuilder('AppBundle:Cota')
+    $tipTradus = array(
+      '0' => "Individuala",
+      '1' => "Grup restrans",
+      '2' => "Colectiva"
+    );
+    $autorizatiiCursor = $dm->createQueryBuilder('AppBundle:Autorizatie')
       ->sort('created', 'desc')
       ->getQuery()->execute();
-    
-    $listaCote = array();
-    foreach($cursorCote as $cota) {
-      $cotaDisplay = $cota->display();
-      $agentFondVanatoare = $userRepository->findOneById($cota->userId);
-      $userAprobare = $userRepository->findOneById($cota->userAprobareId);
-      $specie = $speciesRepository->findOneById($cota->speciesId);
-      $cotaDisplay['user'] = $agentFondVanatoare->display();
-      $cotaDisplay['specie'] = $specie->display();
-      $cotaDisplay['userAprobare'] = $userAprobare->display();
-      $listaCote[] = $cotaDisplay;
+    $listaAutorizatii = array();
+    foreach($autorizatiiCursor as $autorizatie) {
+      $autorizatieDisplay = $autorizatie->display();
+      $organizator = $userRepository->findOneById($autorizatie->organizatorId);
+      $autorizatieDisplay['organizator'] = $organizator->display();
+      $autorizatieDisplay['tipul'] = $tipTradus[$autorizatie->tip]; 
+      $autorizatieDisplay['activa'] = $autorizatie->activa ? "DA" : "NU"; 
+      $listaAutorizatii[] = $autorizatieDisplay;
     }
-
+  
     $params = array(
       'user' => $user,
-      'navigation' => UtilsController::getNavigation('cote'),
-      'listaCote' => $listaCote,
-      'listaSpecii' => $listaSpecii,
-      'listaAgentiFondVanatoare' => $listaAgentiFondVanatoare,
-      'form' => $form->createView()
+      'navigation' => UtilsController::getNavigation('autorizatii'),
+      'listaAutorizatii' => $listaAutorizatii
     );
-    return $this->render('cms/am/cote.html.twig', $params);
+    return $this->render('cms/af/autorizatii.html.twig', $params);
   }
   
   /**
