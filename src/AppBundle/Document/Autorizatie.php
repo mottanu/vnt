@@ -119,6 +119,7 @@ class Autorizatie
       'id' => $this->id,
       'userId' => $this->userId,
       'numar' => $this->numar,
+      'tip' => $this->tip,
       'organizatorId' => $this->organizatorId,
       'cote' => $this->cote,
       'vanatori' => $this->vanatori,

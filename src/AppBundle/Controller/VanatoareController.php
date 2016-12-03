@@ -95,6 +95,8 @@ class VanatoareController extends Controller
    *     section="Vanatoare",
    *     parameters={
    *       {"name"="vanator", "dataType"="text", "required"=true, "source"="body", "description"="Vanator"},
+   *       {"name"="carnet", "dataType"="text", "required"=true, "source"="body", "description"="Carnet"},
+   *       {"name"="cnp", "dataType"="text", "required"=true, "source"="body", "description"="CNP"},
    *     }
    *  )
    */
@@ -124,8 +126,8 @@ class VanatoareController extends Controller
     if($autorizatie->organizatorId != $user->getId())
       return UtilsController::error("Utilizatorul nu are permisiunea de a utiliza aceasta autorizatie!", 414);
     
-    if($autorizatie->tip == 0)
-      return UtilsController::error("Autorizatie este individuala. Nu se pot adauga vanatori!", 415);
+    if($autorizatie->tip == 0 && count($autorizatie->vanatori) == 1)
+      return UtilsController::error("Autorizatie este individuala. Nu se pot adauga mai mult de 1 vanator!", 415);
     
     if($autorizatie->tip == 1 && count($autorizatie->vanatori) == 5)
       return UtilsController::error("Autorizatie este de tip grup restrans. Nu se mai pot adauga alti vanatori!", 416);
@@ -133,8 +135,12 @@ class VanatoareController extends Controller
     if($autorizatie->tip == 2 && count($autorizatie->vanatori) == 25)
       return UtilsController::error("Autorizatie este de tip colectiva. Nu se mai pot adauga alti vanatori!", 417);
     
-    $vanatorNou = $request->request->get("vanator");
-
+    $vanatorNou = array(
+      'nume' => $request->request->get("vanator"),
+      'carnet' => $request->request->get("carnet"),
+      'cnp' => $request->request->get("cnp")
+    );
+  
     $autorizatie->vanatori[] = $vanatorNou;
     $dm->flush();
 
