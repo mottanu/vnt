@@ -340,7 +340,7 @@ class VanatoareController extends Controller
     if($autorizatie->organizatorId != $user->getId())
       return UtilsController::error("Utilizatorul nu are permisiunea de a utiliza aceasta autorizatie!", 414);
 
-    $autorizatie->activa = false;
+    //$autorizatie->activa = false;
     $autorizatie->checkoutData = date("c");
     $dm->flush();
 
