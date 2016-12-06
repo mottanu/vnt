@@ -29,6 +29,7 @@ use AppBundle\Entity\InregistrareForm;
 use AppBundle\Entity\EmptyForm;
 use AppBundle\Entity\CotaForm;
 use AppBundle\Document\Cota;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class AgentMinisterController extends Controller
 {
@@ -91,8 +92,13 @@ class AgentMinisterController extends Controller
     foreach($speciesCursor as $specie) {
       $listaSpecii[] = $specie->display();
       $listaSpeciiSelect[$specie->name] = $specie->getId();
+      foreach($specie->diviziune as $div) {
+        $specieDiviziuneName = $specie->name . ', ' . $div['name'];
+        // $listaSpecii[] = $specie->display();
+        $listaSpeciiSelect[$specieDiviziuneName] = (string)$div['id'];
+      }
     }
-    
+
     $agentiFondVanatoareCursor = $dm->createQueryBuilder('AppBundle:User')
       ->field('isAgentFondVanatoare')->equals(true)
       ->sort('name', 'asc')
@@ -125,7 +131,7 @@ class AgentMinisterController extends Controller
 
       if ($form->get('salveaza')->isClicked()) {
         $cotaForm = $form->getData();
-        
+
         $newCota = new Cota();
         $newCota->userId = $cotaForm->userId;
         $newCota->speciesId = $cotaForm->speciesId;
@@ -146,7 +152,7 @@ class AgentMinisterController extends Controller
       $cotaDisplay = $cota->display();
       $agentFondVanatoare = $userRepository->findOneById($cota->userId);
       $userAprobare = $userRepository->findOneById($cota->userAprobareId);
-      $specie = $speciesRepository->findOneById($cota->speciesId);
+      $specie = UtilsController::getSpecie($cota->speciesId, $dm);
       $cotaDisplay['user'] = $agentFondVanatoare->display();
       $cotaDisplay['specie'] = $specie->display();
       $cotaDisplay['userAprobare'] = $userAprobare->display();

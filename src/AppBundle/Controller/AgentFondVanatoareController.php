@@ -238,7 +238,7 @@ class AgentFondVanatoareController extends Controller
     $listeCoteSelect = array();
     foreach($coteCursor as $cota) {
       $cotaDisplay = $cota->display();
-      $specie = $speciesRepository->findOneById($cota->speciesId);
+      $specie = UtilsController::getSpecie($cota->speciesId, $dm);
       $cotaDisplay['specie'] = $specie->display();
       $listeCote[] = $cotaDisplay;
       $listeCoteSelect[$specie->name] = $specie->getId();
