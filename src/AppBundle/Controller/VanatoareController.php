@@ -30,7 +30,8 @@ class VanatoareController extends Controller
    *     parameters={
    *       {"name"="numarAutorizatie", "dataType"="string", "required"=true, "source"="body", "description"="Numar autorizatie"},
    *       {"name"="latitude", "dataType"="string", "required"=true, "source"="body", "description"="Latitudine checkin"},
-   *       {"name"="longitude", "dataType"="string", "required"=true, "source"="body", "description"="Longitudine checkin"}
+   *       {"name"="longitude", "dataType"="string", "required"=true, "source"="body", "description"="Longitudine checkin"},
+   *       {"name"="versionCode", "dataType"="string", "required"=true, "source"="body", "description"="Version code"}
    *     }
    *  )
    */
@@ -47,6 +48,11 @@ class VanatoareController extends Controller
       return UtilsController::error("Token invalid!", 404);
     if(!$user->isAgentColector && !$user->isAgentFondVanatoare)
       return UtilsController::error("Utilizatorul nu are permisiunea de a realiza aceasta actiune!", 406);
+    
+    $versionCode = $this->getParameter('versionCode');
+    $userVersionCode =  $request->request->get('versionCode');
+    if($versionCode != $userVersionCode)
+      return UtilsController::error("Utilizatorul detine o versiune veche de aplicatie. Va rugam actualizati!", 407);
 
     $numarAutorizatie = $request->request->get('numarAutorizatie');
     if(empty($numarAutorizatie))
@@ -83,6 +89,53 @@ class VanatoareController extends Controller
   }
   
   /**
+   * Matches /v1/vanatoare/{vanatoareId} exactly
+   *
+   * @Route("/v1/inregistrari/{vanatoareId}", name="vanatoareAutorizatieDetalii")
+   * @Method({"GET"})
+   *
+   * @ApiDoc(
+   *     resource=true,
+   *     resourceDescription="Adauga vanatori.",
+   *     description="Adauga vanatori.",
+   *     section="Vanatoare",
+   *     parameters={
+   *     }
+   *  )
+   */
+  public function vanatoareAutorizatieDetalii(Request $request, $vanatoareId = null) {
+
+    $dm = $this->get('doctrine_mongodb')->getManager();
+    $userRepository = $dm->getRepository('AppBundle:User');
+    $autorizatiiRepository = $dm->getRepository('AppBundle:Autorizatie');
+
+    $user = UtilsController::isAuthenticated($request, $dm);
+
+    if(!$user)
+      return UtilsController::error("Token invalid!", 404);
+    if(!$user->isAgentColector && !$user->isAgentFondVanatoare)
+      return UtilsController::error("Utilizatorul nu are permisiunea de a realiza aceasta actiune!", 406);
+
+    if(empty($vanatoareId))
+      return UtilsController::error("Autorizatie invalida!", 414);
+    
+    $autorizatie =  $autorizatiiRepository->findOneById($vanatoareId);
+    if(!$autorizatie)
+      return UtilsController::error("Autorizatie invalida!", 414);
+        
+    if($autorizatie->organizatorId != $user->getId())
+      return UtilsController::error("Utilizatorul nu are permisiunea de a utiliza aceasta autorizatie!", 414);
+    
+    $resp = array(
+      'ok' => true,
+      'result' => array(
+        'autorizatie' => $autorizatie->display()
+      )
+    );
+    return new JsonResponse($resp);
+  }
+  
+  /**
    * Matches /v1/vanatoare/{vanatoareId}/adaugaVanatori exactly
    *
    * @Route("/v1/inregistrari/{vanatoareId}/adaugaVanatori", name="vanatoareAutorizatieVanatori")
@@ -94,7 +147,8 @@ class VanatoareController extends Controller
    *     description="Adauga vanatori.",
    *     section="Vanatoare",
    *     parameters={
-   *       {"name"="vanator", "dataType"="text", "required"=true, "source"="body", "description"="Vanator"},
+   *       {"name"="nume", "dataType"="text", "required"=true, "source"="body", "description"="Nume Vanator"},
+   *       {"name"="prenume", "dataType"="text", "required"=true, "source"="body", "description"="Prenume Vanator"},
    *       {"name"="carnet", "dataType"="text", "required"=true, "source"="body", "description"="Carnet"},
    *       {"name"="cnp", "dataType"="text", "required"=true, "source"="body", "description"="CNP"},
    *     }
@@ -136,7 +190,8 @@ class VanatoareController extends Controller
       return UtilsController::error("Autorizatie este de tip colectiva. Nu se mai pot adauga alti vanatori!", 417);
     
     $vanatorNou = array(
-      'nume' => $request->request->get("vanator"),
+      'nume' => $request->request->get("nume"),
+      'prenume' => $request->request->get("prenume"),
       'carnet' => $request->request->get("carnet"),
       'cnp' => $request->request->get("cnp")
     );
